@@ -3,9 +3,8 @@
    1. setup-v2ray，#v2ray的配置  
 2. pvebackup.sh  #PVE 配置文件備份
 3. pvetools.sh  #PVE 美化腳本
-```
-## pvetoos 配置、备份、恢复
 
+## pvetoos 配置、备份、恢复  
 一、备份步骤  
 1.在pve中添加計畫任務  
 将 *pvebackup.sh* 脚本加入到 */usr/local/bin/* 目录
