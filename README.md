@@ -1,8 +1,8 @@
 ## 虛擬機安裝和配置  
-1. install-immortalwrt，安裝immortalwrt 步骤  
-   1. setup-v2ray，v2ray的配置  
-2. pvebackup.sh  
-3. pvetools.sh  
+1. install-immortalwrt，#安裝immortalwrt 步骤  
+   1. setup-v2ray，#v2ray的配置  
+2. pvebackup.sh  #PVE 配置文件備份
+3. pvetools.sh  #PVE 美化腳本
 ```
 ## pvetoos 配置、备份、恢复
 
