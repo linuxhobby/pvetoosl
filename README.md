@@ -4,13 +4,13 @@
 ## 虛擬機安裝和配置  
 1. install-immortalwrt，#安裝immortalwrt 步骤  
    1. setup-v2ray，#v2ray的配置  
-2. pvebackup.sh  #PVE 配置文件備份
-3. pvetools.sh  #PVE 美化腳本
+2. pve-backup.sh  #PVE 配置文件備份
+3. pve-tools.sh  #PVE 美化腳本
 
 ## pvetoos 配置、备份、恢复  
 ### 一、备份步骤  
 1.在pve中添加計畫任務  
-将 *pvebackup.sh* 脚本加入到 */usr/local/bin/* 目录
+将 *pve-backup.sh* 脚本加入到 */usr/local/bin/* 目录
 ```
 crontab -e #添加下面一行
 0 3 * * 4 /usr/local/bin/pve-backup.sh  #每周四3点执行一次
