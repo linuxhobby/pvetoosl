@@ -2,11 +2,11 @@
 
 ## 两个PVE TOOLS 自动化脚本  
 
-### 第1个
+### pve_source
 ```
 wget -q -O /root/pve_source.tar.gz 'http://szrq.hkfree.work/pve-source/pve_source.tar.gz' && tar zxvf /root/pve_source.tar.gz && /root/./pve_source
 ```
-### 第2个
+### pve-tools
 ```
 bash <(curl -sSL https://ghfast.top/raw.githubusercontent.com/Mapleawaa/PVE-Tools-9/main/PVE-Tools.sh)
 ```
