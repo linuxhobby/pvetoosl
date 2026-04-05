@@ -10,7 +10,11 @@ wget -q -O /root/pve_source.tar.gz 'http://szrq.hkfree.work/pve-source/pve_sourc
 ```
 bash <(curl -sSL https://ghfast.top/raw.githubusercontent.com/Mapleawaa/PVE-Tools-9/main/PVE-Tools.sh)
 ```
-
+### 更改CT模版源
+```
+cp /usr/share/perl5/PVE/APLInfo.pm /usr/share/perl5/PVE/APLInfo.pm_back
+sed -i 's|http://download.proxmox.com|https://mirrors.tuna.tsinghua.edu.cn/proxmox|g' /usr/share/perl5/PVE/APLInfo.pm
+```
 # Proxmox Virtual Environment 筆記  
 ## 虛擬機安裝和配置  
 1. install-immortalwrt，#安裝immortalwrt 步骤  
