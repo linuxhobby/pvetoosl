@@ -5,3 +5,7 @@ qm importdisk 900 /var/lib/vz/template/iso/DS918-701-42962.img local-lvm
 
 DSM6：https://spk.imnks.com/，还需要在「常规」-「信任层级」中选中「任何发行者」
 DSM7：https://spk7.imnks.com/
+
+
+
+qm importdisk 900 /var/lib/vz/template/iso/DS918-701-42962-test.img local-lvm
