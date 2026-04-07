@@ -84,7 +84,7 @@ while true; do
         n|N) SELECTED=(0 0 0 0 0 0 0) ;;
         q|Q)
             clear
-            echo -e "\n  ${RED} (^_^)v已退出，未执行任何操作。${NC}\n"
+            echo -e "\n  ${RED} (^_^)v  已退出，未执行任何操作。${NC}\n"
             exit 0
             ;;
         [1-7])
@@ -115,6 +115,7 @@ SUMMARY=()
 if [[ "${SELECTED[0]}" == "1" ]]; then
     info "设置时区为 Asia/Shanghai ..."
     timedatectl set-timezone Asia/Shanghai
+    timedatectl set-ntp true
     TZ_RESULT="$(timedatectl | grep 'Time zone' | awk '{print $3}')"
     success "时区已设置为：$TZ_RESULT"
     SUMMARY+=("  时区            : $TZ_RESULT")
@@ -139,9 +140,9 @@ fi
 # 3. 常用工具
 if [[ "${SELECTED[2]}" == "1" ]]; then
     info "安装常用工具：curl wget vim net-tools ..."
-    apt-get update -qq && apt-get install -y -qq curl wget vim net-tools
+    apt-get update -qq && apt-get install -y -qq systemd-timesyncd curl wget vim net-tools
     success "工具安装完成"
-    SUMMARY+=("  安装工具        : curl wget vim net-tools")
+    SUMMARY+=("  安装工具        : curl wget vim net-tools systemd-timesyncd")
 else
     SUMMARY+=("  安装工具        : 未安装（跳过）")
 fi
