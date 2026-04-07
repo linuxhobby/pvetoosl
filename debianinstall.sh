@@ -37,7 +37,7 @@ MENU_ITEMS=(
     "修改主机名称（Hostname）"
 )
 # 默认全不选
-SELECTED=(0 0 0 0 0 0)
+SELECTED=(0 0 0 0 0 0 0)
 
 print_menu() {
     clear
