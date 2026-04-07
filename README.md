@@ -1,7 +1,13 @@
 # 更新：2026/04/06
 ### 记录各种安装，仅此而已 ###
 
-
+## 安装 Debian13 后执行自动化脚本
+  
+```
+apt update
+apt install curl -y
+bash <(curl -fsSL https://raw.githubusercontent.com/linuxhobby/ProxmoxVEDocumentation/refs/heads/main/debianinstall.sh)
+```
 ## 两个PVE TOOLS 自动化脚本  
 
 ### pve_source
