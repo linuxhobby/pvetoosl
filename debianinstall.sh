@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==============================================================
 #  Debian 13 一键初始化脚本
-#  功能：时区、locale、常用工具、IPv4/IPv6转发、BBR
+#  功能：时区、locale、常用工具、IPv4/IPv6转发、BBR、清华源
 # 执行：bash <(curl -fsSL https://raw.githubusercontent.com/linuxhobby/ProxmoxVEDocumentation/refs/heads/main/debianinstall.sh)
 # ==============================================================
 
@@ -32,9 +32,10 @@ MENU_ITEMS=(
     "配置 Locale（英文界面 + 中文支持）"
     "安装常用工具（curl wget vim net-tools）"
     "启用 IPv4/IPv6 转发 + BBR"
+    "修改 apt 源为清华镜像源"
 )
 # 默认全不选
-SELECTED=(0 0 0 0)
+SELECTED=(0 0 0 0 0)
 
 print_menu() {
     clear
@@ -72,19 +73,19 @@ while true; do
                 break
             fi
             ;;
-        a|A) SELECTED=(1 1 1 1) ;;
-        n|N) SELECTED=(0 0 0 0) ;;
+        a|A) SELECTED=(1 1 1 1 1) ;;
+        n|N) SELECTED=(0 0 0 0 0) ;;
         q|Q)
             clear
             echo -e "\n  ${YELLOW}已退出，未执行任何操作。${NC}\n"
             exit 0
             ;;
-        [1-4])
+        [1-5])
             idx=$((input - 1))
             [[ "${SELECTED[$idx]}" == "1" ]] && SELECTED[$idx]=0 || SELECTED[$idx]=1
             ;;
         *)
-            echo -e "\n  ${YELLOW}[WARN]${NC}  无效输入，请输入 1-4 / a / n / q / 回车"
+            echo -e "\n  ${YELLOW}[WARN]${NC}  无效输入，请输入 1-5 / a / n / q / 回车"
             sleep 1
             ;;
     esac
@@ -145,9 +146,9 @@ fi
 if [[ "${SELECTED[2]}" == "1" ]]; then
     info "安装常用工具：curl wget vim net-tools ..."
     apt-get update -qq
-    apt-get install -y -qq wget vim net-tools
-    success "wget、vim、net-tools 安装完成"
-    SUMMARY+=("  安装工具    : wget vim net-tools")
+    apt-get install -y -qq curl wget vim net-tools
+    success "curl、wget、vim、net-tools 安装完成"
+    SUMMARY+=("  安装工具    : curl wget vim net-tools")
 else
     warn "跳过：安装常用工具"
     SUMMARY+=("  安装工具    : 未安装（跳过）")
@@ -186,6 +187,72 @@ EOF
 else
     warn "跳过：IPv4/IPv6 转发 + BBR"
     SUMMARY+=("  转发 / BBR  : 未配置（跳过）")
+fi
+
+# ==============================================================
+#  5. 修改 apt 源为清华镜像源
+# ==============================================================
+if [[ "${SELECTED[4]}" == "1" ]]; then
+    info "修改 apt 源为清华镜像源 ..."
+
+    # 备份原始源文件
+    SOURCES_DIR="/etc/apt/sources.list.d"
+    BACKUP_DIR="/etc/apt/sources.list.d/backup_$(date +%Y%m%d%H%M%S)"
+    mkdir -p "$BACKUP_DIR"
+
+    # 备份 /etc/apt/sources.list（若存在）
+    if [[ -f /etc/apt/sources.list ]]; then
+        cp /etc/apt/sources.list /etc/apt/sources.list.bak
+        info "已备份原 sources.list 至 /etc/apt/sources.list.bak"
+    fi
+
+    # 备份 sources.list.d 下的 .sources / .list 文件
+    find "$SOURCES_DIR" -maxdepth 1 \( -name "*.sources" -o -name "*.list" \) \
+        ! -path "$BACKUP_DIR/*" -exec cp {} "$BACKUP_DIR/" \; 2>/dev/null || true
+
+    # Debian 13 (trixie) 使用 DEB822 格式（.sources）
+    # 检测当前系统代号
+    CODENAME=$(lsb_release -cs 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
+    CODENAME=${CODENAME:-trixie}
+
+    # 禁用原有源（避免冲突）
+    find "$SOURCES_DIR" -maxdepth 1 \( -name "*.sources" -o -name "*.list" \) \
+        ! -path "$BACKUP_DIR/*" -exec mv {} {}.disabled \; 2>/dev/null || true
+    [[ -f /etc/apt/sources.list ]] && mv /etc/apt/sources.list /etc/apt/sources.list.disabled 2>/dev/null || true
+
+    # 写入清华源（DEB822 格式）
+    cat > /etc/apt/sources.list.d/tuna.sources <<EOF
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
+Suites: ${CODENAME} ${CODENAME}-updates ${CODENAME}-backports
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
+Suites: ${CODENAME}-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+
+    # 验证：更新索引
+    if apt-get update -qq 2>&1 | grep -qi "error\|failed"; then
+        warn "清华源更新时出现错误，正在回滚..."
+        # 回滚
+        find "$SOURCES_DIR" -maxdepth 1 -name "*.disabled" \
+            ! -path "$BACKUP_DIR/*" | while read f; do mv "$f" "${f%.disabled}"; done
+        [[ -f /etc/apt/sources.list.disabled ]] && mv /etc/apt/sources.list.disabled /etc/apt/sources.list
+        rm -f /etc/apt/sources.list.d/tuna.sources
+        apt-get update -qq
+        warn "已回滚至原始源"
+        SUMMARY+=("  apt 源      : 切换失败，已回滚原始源")
+    else
+        success "apt 源已切换为清华镜像源（${CODENAME}）"
+        SUMMARY+=("  apt 源      : 清华镜像源 mirrors.tuna.tsinghua.edu.cn")
+    fi
+else
+    warn "跳过：修改 apt 源"
+    SUMMARY+=("  apt 源      : 未修改（跳过）")
 fi
 
 # ==============================================================
