@@ -22,21 +22,13 @@ echo -e "${BLUE}${BOLD}>>> 开始执行系统初始化...${NC}"
 
 # 1. 安装基础工具
 echo -e "${YELLOW}>>> 2. 正在安装工具 (net-tools, vnstat, vim, curl)...${NC}"
-apt-get install -y net-tools vnstat vim wget systemd-timesyncd
+apt-get install -y net-tools vnstat vim wget
 echo -e "${GREEN}>>> 工具安装完毕。${NC}"
 
 
 # 2. 时区与 NTP 时间同步
 echo -e "${YELLOW}>>> 1. 正在设置时区与时间同步...${NC}"
 timedatectl set-timezone Asia/Shanghai
-cat > /etc/systemd/timesyncd.conf <<EOF
-[Time]
-NTP=ntp.aliyun.com ntp1.aliyun.com ntp.tencent.com
-FallbackNTP=time.google.com
-EOF
-systemctl enable systemd-timesyncd --now
-systemctl restart systemd-timesyncd
-timedatectl set-ntp true
 echo -e "${GREEN}>>> 时区已同步为 Asia/Shanghai，时间状态:$(date)${NC}"
 
 
