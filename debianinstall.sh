@@ -229,11 +229,21 @@ else
 fi
 
 # --- 7. v2ray ---
-if [[ "${SELECTED[7]}" == "1" ]]; then
-bash <(wget -qO- -o- https://github.com/233boy/v2ray/raw/master/install.sh)  
+if [[ "${SELECTED[6]}" == "1" ]]; then
+    info "准备安装 v2ray 一键安装脚本 ..."
+    # 检查依赖
+    apt-get update -qq && apt-get install -y -qq wget curl
+    
+    # 执行 v2ray 一键脚本
+    # 使用 bash <(wget...) 方式
+    warn "即将进入 v2ray 交互式安装界面，请根据提示操作。"
+    sleep 2
+    bash <(wget -qO- -o- https://github.com/233boy/v2ray/raw/master/install.sh)
+    
+    success "v2ray 脚本执行完毕"
+    SUMMARY+=("  v2ray           : 已运行安装脚本")
 else
-    warn "跳过：v2Ray安装"
-    SUMMARY+=("  v2Ray            : 未安装（跳过）")
+    SUMMARY+=("  v2ray           : 未安装（跳过）")
 fi
 
 # --- 8. 主机名 ---
