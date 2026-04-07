@@ -26,7 +26,7 @@ apt-get install -y net-tools vnstat vim wget
 echo -e "${GREEN}>>> 工具安装完毕。${NC}"
 
 
-# 2. 时区与
+# 2. 时区设置
 echo -e "${YELLOW}>>> 1. 正在设置时区...${NC}"
 timedatectl set-timezone Asia/Shanghai
 echo -e "${GREEN}>>> 时区已同步为 Asia/Shanghai，时间状态:$(date)${NC}"
