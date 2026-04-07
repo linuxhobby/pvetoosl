@@ -3,13 +3,13 @@ services:
     container_name: tailscale
     hostname: tailscaledocker           #根据实际主机名称修改
     image: tailscale/tailscale:latest
-    restart: always                     # unless-stopped，容易反复重启
+    restart: unless-stopped             # always
     network_mode: host
     privileged: true
     volumes:
       - /dev/net/tun:/dev/net/tun
       - ./data:/var/lib/tailscale
     environment:
-      - TS_AUTH_KEY=XXXXXXXXXXXXXXXXXXXXXXXX           #tailscale申请key
+      - TS_AUTH_KEY=tskey-auth-kB9Bg6wTRL-9JNC23QgsU7XCZu3eYK           #tailscale申请key,这个是模拟的key
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_EXTRA_ARGS=--advertise-exit-node --advertise-routes=192.168.0.0/16 --accept-routes=true #--accept-dns=true #一般不建议用
