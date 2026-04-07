@@ -54,11 +54,5 @@ else
     echo -e "${RED}    警告: 未找到 /etc/vnstat.conf${NC}"
 fi
 
-# 4. 执行远程脚本
-echo -e "${GREEN}>>> 4. 正在执行 V2Ray 安装脚本...${NC}"
-REMOTE_URL="https://raw.githubusercontent.com/linuxhobby/ProxmoxVEDocumentation/refs/heads/main/v2ray/install.sh"
-
-# 此处不使用静默模式，直接执行以查看详细日志
-bash <(curl -fsSL "$REMOTE_URL")
 
 echo -e "${BLUE}${BOLD}>>> 所有任务执行完毕，系统已配置完成。${NC}"
