@@ -229,6 +229,10 @@ fi
 
 # --- 7. 主机名 ---
 if [[ "${SELECTED[6]}" == "1" ]]; then
+    # 获取当前主机名
+    CURRENT_HOSTNAME=$(hostname)
+    
+    echo -e "\n${CYAN}[INPUT]${NC} 当前主机名 (Hostname) 为: ${RED}$CURRENT_HOSTNAME${NC}"
     echo -e "\n${CYAN}[INPUT]${NC} 请输入新的主机名(Hostname):"
     read -r NEW_HOSTNAME
     if [[ -n "$NEW_HOSTNAME" ]]; then
@@ -240,7 +244,7 @@ if [[ "${SELECTED[6]}" == "1" ]]; then
         sed -i "s/$OLD_HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts
         success "主机名已修改为: $NEW_HOSTNAME"
         # 增加重启提示
-        echo -e "${YELLOW}${BOLD}[!] 提示: 主机名已更改，部分服务需重启后才能识别新名称，建议稍后重启系统。${NC}"
+        echo -e "${GREEN}${BOLD}[!] 提示: 主机名已更改，部分服务需重启后才能识别新名称，建议稍后重启系统。${NC}"
         SUMMARY+=("  主机名          : $OLD_HOSTNAME -> $NEW_HOSTNAME")
     else
         SUMMARY+=("  主机名          : 未修改（输入为空）")
