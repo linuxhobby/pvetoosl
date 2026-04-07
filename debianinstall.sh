@@ -69,7 +69,7 @@ while true; do
             any=0
             for s in "${SELECTED[@]}"; do [[ "$s" == "1" ]] && any=1; done
             if [[ $any -eq 0 ]]; then
-                echo -e "\n  ${YELLOW}[WARN]${NC}  至少需要选择一项，请重新选择"
+                echo -e "\n  ${YELLOW}[RED]${NC}  至少需要选择一项，请重新选择"
                 sleep 1
             else
                 break
@@ -79,7 +79,7 @@ while true; do
         n|N) SELECTED=(0 0 0 0 0 0) ;;
         q|Q)
             clear
-            echo -e "\n  ${YELLOW}已退出，未执行任何操作。${NC}\n"
+            echo -e "\n  ${RED}已退出，未执行任何操作。${NC}\n"
             exit 0
             ;;
         [1-6])
@@ -87,7 +87,7 @@ while true; do
             [[ "${SELECTED[$idx]}" == "1" ]] && SELECTED[$idx]=0 || SELECTED[$idx]=1
             ;;
         *)
-            echo -e "\n  ${YELLOW}[WARN]${NC}  无效输入，请输入 1-7 / a / n / q / 回车"
+            echo -e "\n  ${RED}[WARN]${NC}  无效输入，请输入 1-7 / a / n / q / 回车"
             sleep 1
             ;;
     esac
