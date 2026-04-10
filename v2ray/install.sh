@@ -2,6 +2,10 @@
 
 # ==============================================================
 #  Debian 13 可视化初始化脚本 (过程可见)
+#  1、安装基础工具包：net-tools vnstat vim wget
+#  2、时区设置
+#  3、自动配置vnstat 配置
+#  4、执行v2ray一键安装脚本
 # ==============================================================
 
 # 颜色定义
@@ -46,8 +50,8 @@ else
     echo -e "${RED}    警告: 未找到 /etc/vnstat.conf${NC}"
 fi
 
-
 echo -e "${BLUE}${BOLD}>>> 所有任务执行完毕，系统已配置完成。${NC}"
-echo -e "${BLUE}${BOLD}>>> 下面开始执行v2ray一键安装脚本。${NC}"
 
+# 3. vnstat 配置
+echo -e "${BLUE}${BOLD}>>> 下面开始执行v2ray一键安装脚本。${NC}"
 bash <(wget -qO- -o- https://github.com/233boy/v2ray/raw/master/install.sh)
