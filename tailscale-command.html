@@ -21,6 +21,11 @@
   .cmd-name { font-size: 16px; font-weight: 600; color: #0969da; font-family: 'SFMono-Regular', Consolas, monospace; min-width: 76px; flex-shrink: 0; padding-top: 1px; }
   .cmd-desc { font-size: 15px; color: #656d76; line-height: 1.4; }
   .no-result { font-size: 14px; color: #8c959f; padding: 1rem 0; }
+  footer { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #d0d7de; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 0.75rem; font-size: 13px; color: #656d76; }
+  footer a { color: #0969da; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .footer-left { display: flex; flex-direction: column; gap: 4px; }
+  footer .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
   @media (prefers-color-scheme: dark) {
     body { background: #0d1117; color: #e6edf3; }
     .search-bar, .cmd-card { background: #161b22; border-color: #30363d; }
@@ -30,6 +35,8 @@
     .section-title { color: #8b949e; }
     .search-bar input { color: #e6edf3; }
     .search-bar input::placeholder { color: #484f58; }
+    footer { border-top-color: #30363d; }
+    footer a { color: #58a6ff; }
   }
 </style>
 </head>
@@ -42,6 +49,16 @@
     <input type="text" placeholder="搜索命令..." id="search" oninput="filter()" />
   </div>
   <div id="content"></div>
+  <footer>
+    <div class="footer-left">
+      <span>© 2025 <a href="https://github.com/linuxhobby" target="_blank">linuxhobby</a></span>
+      <span>最后更新：2025 年 4 月</span>
+    </div>
+    <div class="footer-right">
+      <span><a href="https://github.com/linuxhobby/ProxmoxVEDocumentation" target="_blank">GitHub 仓库</a></span>
+      <span><a href="https://tailscale.com/kb/1241/tailscale-cli" target="_blank">Tailscale 官方文档</a></span>
+    </div>
+  </footer>
 </div>
 <script>
 const data = [
