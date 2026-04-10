@@ -1,3 +1,14 @@
+一、去掉登录订阅弹窗（适用于 PBS 4.1.0）
+# 备份原文件
+cp /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js \
+   /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bak
+
+# 去掉弹窗
+sed -i "s/res.data.status.toLowerCase() !== 'active'/false/" \
+  /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+
+
 1. 安装NFS客户端
 apt-get install nfs-common
 
@@ -20,25 +31,22 @@ hard,intr — 网络中断时不丢失任务
 timeo=30 — 超时30秒重试
 retrans=3 — 重试3次
 
-验证fstab配置：
-5. 在PBS中配置作业使用NFS路径
-在PBS作业脚本中指定输出到NFS路径：
-#!/bin/bash
-#PBS -N my_job
-#PBS -o /mnt/nas_storage/output/
-#PBS -e /mnt/nas_storage/output/
-#PBS -l nodes=1:ppn=4
+5.PBS Datastore创建成功 nas-storage → /mnt/nas_storage/pbs-datastore
+# 创建空目录
+mkdir -p /mnt/nas_storage/pbs-datastore
+# 创建Datastore
+proxmox-backup-manager datastore create nas-storage /mnt/nas_storage/pbs-datastore
+chown -R backup:backup /mnt/nas_storage/pbs-datastore
+chmod -R 755 /mnt/nas_storage/pbs-datastore
 
-cd /mnt/nas_storage/jobs/
-# 你的计算命令
-常见排查
-# 检查NFS服务器是否可达
-showmount -e 192.168.2.11
+6.PVE Web界面 → 数据中心 → 存储 → 添加 → Proxmox Backup Server
+ID：nas-backup
+服务器：pbs服务器ip，根据实际情况填写
+Datastore：nas-storage
+用户名：root@pam，必须加上@pam
+密码：PBS的root密码，根据实际情况填写
+指纹：根据实际情况填写
 
-# 查看挂载状态
-mount | grep nfs
 
-# 检查权限
-ls -la /mnt/nas_storage
-
-如果 showmount -e 192.168.2.11 能看到 /volume1/storage500GB1，说明NFS共享配置正确，可以正常挂载。
+PBS：调整精简&GC作业即可。
+PVE：设置备份计划即可。
