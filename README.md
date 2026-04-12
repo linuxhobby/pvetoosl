@@ -55,7 +55,7 @@ sed -i 's|http://download.proxmox.com|https://mirrors.tuna.tsinghua.edu.cn/proxm
   /usr/share/perl5/PVE/APLInfo.pm
 ```
 
-### 关闭订阅弹窗
+### 关闭订阅弹窗(同样适用关闭【PBS】)  
 
 ```bash
 sed -Ezi.bak \
@@ -63,7 +63,11 @@ sed -Ezi.bak \
   /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js \
   && systemctl restart pveproxy.service
 ```
-
+如果是pbs，执行以下指令
+```bash
+systemctl restart proxmox-backup
+systemctl restart proxmox-backup-proxy
+```
 ---
 
 ## 虚拟机安装和配置
