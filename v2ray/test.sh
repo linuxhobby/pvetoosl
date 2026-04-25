@@ -2,6 +2,8 @@
 
 # ====================================================
 # 将军阁下的专属 V2Ray 综合管理脚本 (解析检测+返回菜单版)
+# https://raw.githubusercontent.com/linuxhobby/ProxmoxVE/refs/heads/main/v2ray/test.sh
+# 版本
 # ====================================================
 
 RED='\033[0;31m'
@@ -197,6 +199,7 @@ uninstall_v2ray() {
 while true; do
     echo -e "${YELLOW}=================================${NC}"
     echo -e "${GREEN}   将军阁下的 V2Ray 管理面板 ${NC}"
+    echo -e "${GREEN}   随即号码：767 ${NC}"
     echo -e "${YELLOW}=================================${NC}"
     echo -e "1) 安装 V2Ray (默认推荐 VLESS)"
     echo -e "2) 查看当前配置与链接"
