@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # ====================================================
-# 将军阁下的专属 V2Ray 综合管理脚本 (解析检测+返回菜单版)
-# https://raw.githubusercontent.com/linuxhobby/ProxmoxVE/refs/heads/main/v2ray/test.sh
-# curl -sL https://raw.githubusercontent.com/linuxhobby/ProxmoxVE/refs/heads/main/v2ray/test.sh -o test.sh && chmod +x test.sh && ./test.sh
+# 将军阁下的专属 V2Ray 综合管理脚本 (终极优化版)
 # ====================================================
 
 RED='\033[0;31m'
@@ -15,6 +13,7 @@ NC='\033[0m'
 CONFIG_FILE="/usr/local/etc/v2ray/config.json"
 CADDY_FILE="/etc/caddy/Caddyfile"
 
+# 权限检查
 [[ $EUID -ne 0 ]] && echo -e "${RED}错误: 必须使用 root 权限运行!${NC}" && exit 1
 
 # --- 内部功能函数 ---
@@ -56,12 +55,12 @@ check_dns() {
     local domain=$1
     echo -e "${YELLOW}正在检测域名解析状态...${NC}"
     
-    # 获取本地公网IP
-    local local_ipv4=$(curl -s4 https://api64.ipify.org || echo "未检测到")
-    local local_ipv6=$(curl -s6 https://api64.ipify.org || echo "未检测到")
+    # 获取本地公网IP (增加 5 秒超时限制)
+    local local_ipv4=$(curl -s4m 5 https://api64.ipify.org || echo "未检测到")
+    local local_ipv6=$(curl -s6m 5 https://api64.ipify.org || echo "未检测到")
     
-    # 使用 dig 或 nslookup 获取域名解析 (需安装 dnsutils)
-    apt install -y dnsutils > /dev/null 2>&1
+    # 自动安装 dnsutils
+    apt update && apt install -y dnsutils > /dev/null 2>&1
     local resolved_ipv4=$(dig +short A "$domain" | tail -n1)
     local resolved_ipv6=$(dig +short AAAA "$domain" | tail -n1)
 
@@ -102,7 +101,6 @@ install_v2ray() {
     read -p "请输入解析域名 (例如: cc.myvpsworld.top): " DOMAIN
     [[ -z "$DOMAIN" ]] && return
     
-    # 调用解析检测
     check_dns "$DOMAIN" || return
 
     echo -e "${GREEN}正在安装核心与Caddy...${NC}"
@@ -145,6 +143,7 @@ EOF
 
     systemctl daemon-reload && systemctl enable v2ray caddy && systemctl restart v2ray caddy
     generate_output "$UUID" "$DOMAIN" "$WSPATH" "$PROTO"
+    echo -e "${YELLOW}提示：Caddy 正在申请 SSL 证书，初次使用请等待 30-60 秒后连接。${NC}"
 }
 
 # 2. 查看配置
@@ -153,6 +152,9 @@ show_config() {
         echo -e "${RED}未检测到安装配置！${NC}"
         return
     fi
+    # 增加状态检查
+    systemctl is-active --quiet v2ray || echo -e "${YELLOW}警告：V2Ray 服务当前未运行！${NC}"
+    
     local proto=$(jq -r '.inbounds[0].protocol' $CONFIG_FILE)
     local domain=$(grep -v "{" $CADDY_FILE | head -n 1 | awk '{print $1}')
     local path=$(jq -r '.inbounds[0].streamSettings.wsSettings.path' $CONFIG_FILE)
@@ -178,10 +180,14 @@ add_user() {
         jq ".inbounds[0].settings.clients += [{\"id\": \"$new_uuid\"}]" $CONFIG_FILE > ${CONFIG_FILE}.tmp
     fi
     
-    mv ${CONFIG_FILE}.tmp $CONFIG_FILE
-    systemctl restart v2ray
-    echo -e "${GREEN}用户添加成功！${NC}"
-    show_config
+    if [[ $? -eq 0 ]]; then
+        mv ${CONFIG_FILE}.tmp $CONFIG_FILE
+        systemctl restart v2ray
+        echo -e "${GREEN}用户添加成功！${NC}"
+        show_config
+    else
+        echo -e "${RED}添加用户失败，请检查 jq 是否安装或配置格式是否正确。${NC}"
+    fi
 }
 
 # 4. 删除配置 (卸载)
@@ -199,7 +205,7 @@ uninstall_v2ray() {
 while true; do
     echo -e "${YELLOW}=================================${NC}"
     echo -e "${GREEN}   将军阁下的 V2Ray 管理面板 ${NC}"
-    echo -e "${GREEN}   随即号码：767 ${NC}"
+    echo -e "${GREEN}   随机号码：897 ${NC}"
     echo -e "${YELLOW}=================================${NC}"
     echo -e "1) 安装 V2Ray (默认推荐 VLESS)"
     echo -e "2) 查看当前配置与链接"
